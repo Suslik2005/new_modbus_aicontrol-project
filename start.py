@@ -26,12 +26,14 @@ class Modbus(QMainWindow):
         self.ui.pushButton_2.clicked.connect(self.ask)
     #при отправке значения запускается поток
     def potok(self):
-        t1 = threading.Thread(target=self.surveillance, args=(), daemon=True)
-        t1.start()
+        monitoring_thread = threading.Thread(target=self.surveillance())
+        monitoring_thread.daemon = True  # Закрыть поток при завершении программы
+        monitoring_thread.start()
     def surveillance(self):
-        time.sleep(15)
-        result = self.client.read_holding_registers(10031, 1)
-        print(result)
+        while True:
+            time.sleep(10)
+            result = self.client.read_holding_registers(10031, 1)
+            print(result)
 
 
 
