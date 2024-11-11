@@ -2,104 +2,87 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="enabled">
-   <bool>false</bool>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>230</width>
-    <height>452</height>
+    <width>357</width>
+    <height>251</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>modbus</string>
+   <string>main_window</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:0, y2:0, stop:0 rgba(81, 0, 135, 255),
-rgba(41, 61, 132, 235), stop:1 rgba(155, 79, 165, 255));</string>
+   <string notr="true">background-color:  rgba(160,160,160, 130);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QFrame" name="balance_frame">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgba(255,255,255, 30);
-border: 1px solid rgba(255,255,255,40);
-border-radius: 7px;</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QPushButton" name="pushButton">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>подключиться</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_2">
+        <item>
          <property name="text">
-          <string>подключиться</string>
+          <string>колибролвка отключена</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="comboBox">
-         <item>
-          <property name="text">
-           <string>колибролвка отключена</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>начать калибровку</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>сохранить калибровку</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>вернуть заводскую калибровку</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>задать термокомпенсацию(-)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>задать термокомпенсацию(+)</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
+        </item>
+        <item>
          <property name="text">
-          <string/>
+          <string>начать калибровку</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_2">
+        </item>
+        <item>
          <property name="text">
-          <string>TextLabel</string>
+          <string>сохранить калибровку</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_2">
+        </item>
+        <item>
          <property name="text">
-          <string>принять</string>
+          <string>вернуть заводскую калибровку</string>
          </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+        </item>
+        <item>
+         <property name="text">
+          <string>задать термокомпенсацию(-)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>задать термокомпенсацию(+)</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>ок</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

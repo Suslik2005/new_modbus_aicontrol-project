@@ -1,5 +1,6 @@
 import sys
 import threading
+import time
 
 import PySide6
 from PySide6 import QtWidgets, QtGui
@@ -15,34 +16,45 @@ class Modbus(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.client = None
-        self.main_dict = {"калибролвка отключена": 0, 'начать калибровку': 1, "сохранить калибровку": 2,
-                          "вернуть заводскую калибровку": 3, "задать термокомпенсацию(-)": 4,
-                          "задать термокомпенсацию(+)": 5}
+        #словарь для отправки значений
+        self.main_dict = {"калибролвка отключена": 1, 'начать калибровку': 2, "сохранить калибровку": 3,
+                          "вернуть заводскую калибровку": 4, "задать термокомпенсацию(-)": 5,
+                          "задать термокомпенсацию(+)": 6}
+        #кнопка подключения
         self.ui.pushButton.clicked.connect(self.connection)
+        #кнопка для передачи значения в "действия при калибровке"
         self.ui.pushButton_2.clicked.connect(self.ask)
-
-    def potok(self, a):
-        for i in range(3):
-            b = PySide6.QtWidgets.QTableWidgetItem(str(a[i+1]))
-            self.ui.tableWidget_2.setItem(self.counter - 1, i, b)
-        t1 = threading.Thread(target=self.revizor_vivod, args=(), daemon=True)
+    #при отправке значения запускается поток
+    def potok(self):
+        t1 = threading.Thread(target=self.surveillance, args=(), daemon=True)
         t1.start()
-        # t1.join()
-    def ask(self):
-        vaalue = self.ui.comboBox.currentText()
-        self.client.write_register(10030, vaalue)
-#        result = self.client.read_holding_registers(10031, 1)
-#        print(result)
+    def surveillance(self):
+        time.sleep(15)
+        result = self.client.read_holding_registers(10031, 1)
+        print(result)
 
+
+
+    #функция для отправки значения в 10030 индекс
+    def ask(self):
+        vaalue = self.ui.comboBox_2.currentText()
+        print(vaalue)
+        print(self.main_dict[vaalue])
+        #отправка выбранной команды
+        self.client.write_register(10030, self.main_dict[vaalue])
+        self.potok()
+#
+    #подключение к ModbusTcp
     def connection(self):
         self.client = ModbusTcpClient('192.168.55.79')
         button = self.ui.pushButton
-        try:
-            self.client.connect()
-
+        #значение при подключении (True/False)
+        a = self.client.connect()
+        #есть подключение - кнопка зеленая, нет подключения - кнопка красная
+        if a:
             button.setStyleSheet(
                 'QPushButton {background-color: rgba(0,255,0,30);width: 230px; height: 50 px; color: white;}')
-        except:
+        else:
             button.setStyleSheet(
                 'QPushButton {background-color: rgba(255,0,0,30);width: 230px; height: 50 px; color: white;}')
             print("ошибка подключения")
