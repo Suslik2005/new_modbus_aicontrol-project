@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>357</width>
-    <height>251</height>
+    <width>491</width>
+    <height>227</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,10 +28,27 @@
        </widget>
       </item>
       <item>
+       <widget class="QLineEdit" name="lineEdit">
+        <property name="placeholderText">
+         <string>ip</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox">
+        <property name="placeholderText">
+         <string>последние  исп ip</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QComboBox" name="comboBox_2">
+        <property name="placeholderText">
+         <string>стадия калибровки</string>
+        </property>
         <item>
          <property name="text">
-          <string>колибролвка отключена</string>
+          <string>калибровка отключена</string>
          </property>
         </item>
         <item>
