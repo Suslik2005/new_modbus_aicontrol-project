@@ -45,7 +45,7 @@ class Modbus(QMainWindow):
             file.write(f"{ip}\n")
         print(f"IP '{ip}' записан в файл.")
     def potok(self):
-        monitoring_thread = threading.Thread(target=self.surveillance())
+        monitoring_thread = threading.Thread(target=self.surveillance)
         monitoring_thread.daemon = True  # Закрыть поток при завершении программы
         monitoring_thread.start()
 
@@ -55,7 +55,7 @@ class Modbus(QMainWindow):
             time.sleep(10)
             result = self.client.read_holding_registers(10031, 1)
             print(result)
-            if self.control_result != self.stadiya_colibrovki[int(result)]:
+            if self.control_result != self.stadiya_colibrovki[result]:
                 self.control_result = self.stadiya_colibrovki[int(result)]
                 label.clear()  # Очищаем текст в QLabel
                 label.setText(self.control_result)
@@ -79,11 +79,10 @@ class Modbus(QMainWindow):
         ips = self.read_ips_from_file()
         self.ui.comboBox.addItems(ips)
         print("IP-адреса обновлены в comboBox.")
+
     # подключение к ModbusTcp
     def connection(self):
-        text = self.ui.lineEdit.text()
-        if text == "":
-            text = self.ui.comboBox.currentText()
+        text = self.ui.comboBox.currentText()
         self.client = ModbusTcpClient(text)
         button = self.ui.pushButton
         # значение при подключении (True/False)

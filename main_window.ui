@@ -28,16 +28,15 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit">
-        <property name="placeholderText">
-         <string>ip</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QComboBox" name="comboBox">
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
+        <property name="acceptDrops">
+         <bool>false</bool>
+        </property>
         <property name="placeholderText">
-         <string>последние  исп ip</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -81,14 +80,14 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>
