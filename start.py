@@ -25,6 +25,7 @@ class Modbus(QMainWindow):
         self.client = None
         self.control_result = 0
         self.ui.pushButton_2.setEnabled(False)
+        self.stop_thread = False
         # словарь для отправки значений
         self.main_dict = {"калибролвка отключена": 1, 'начать калибровку': 2, "сохранить калибровку": 3,
                           "вернуть заводскую калибровку": 4, "задать термокомпенсацию(-)": 5,
@@ -37,9 +38,14 @@ class Modbus(QMainWindow):
         self.ui.pushButton.clicked.connect(self.connection)
         # кнопка для передачи значения в "действия при калибровке"
         self.ui.pushButton_2.clicked.connect(self.ask)
+        self.ui.pushButton_3.clicked.connect(self.nonconnection)
 
     # при отправке значения запускается поток
-
+    def nonconnection(self):
+        self.stop_thread = True
+        self.ui.comboBox.clear()
+        self.ui.pushButton.setEnabled(True)
+        self.client.close()
     def write_ip_to_file(self, ip):
         with open(self.FILE_NAME, "a") as file:
             file.write(f"{ip}\n")
@@ -51,7 +57,7 @@ class Modbus(QMainWindow):
 
     def surveillance(self):
         label = self.ui.label
-        while True:
+        while not self.stop_thread:
             time.sleep(10)
             result = self.client.read_holding_registers(10031, 1)
             print(result)
