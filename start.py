@@ -11,28 +11,37 @@ from pymodbus.client import ModbusTcpClient
 from main_window import Ui_MainWindow
 
 DB_NAME = "ip.db"
+
+
 class Modbus(QMainWindow):
     def __init__(self):
         super(Modbus, self).__init__()
-        #создание txt файла с последними ip
+        # создание txt файла с последними ip
         self.FILE_NAME = "ips.txt"
         if not os.path.exists(self.FILE_NAME):
             with open(self.FILE_NAME, "w") as file:
+                self.ips = []
                 pass  # Просто создаём пустой файл
-        #до сюда
+        else:
+            f = open('ips.txt', 'r')
+            self.ips = f.read().split('\n')
+            print(self.ips)
+            f.close()
+
+        # до сюда
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.client = None
         self.control_result = 0
         self.ui.pushButton_2.setEnabled(False)
-        self.stop_thread = False
+        self.thread = False
         # словарь для отправки значений
-        self.main_dict = {"калибролвка отключена": 1, 'начать калибровку': 2, "сохранить калибровку": 3,
-                          "вернуть заводскую калибровку": 4, "задать термокомпенсацию(-)": 5,
-                          "задать термокомпенсацию(+)": 6}
-        self.stadiya_colibrovki = {1: "калибровка отключена", 2: "подайте 4мА (1 В)", 3: "подайте 20мА (5 В)",
-                                   4: "сохранить калибровку?", 5: "подайте 8мА (2 В)", 6: "подайте 12мА (3 В)",
-                                   7: "подайте 16мА (4 В)", 8: "ожидание стабилизации сигнала", 9: "калиброка"}
+        self.main_dict = {"калибролвка отключена": 0, 'начать калибровку': 1, "сохранить калибровку": 2,
+                          "вернуть заводскую калибровку": 3, "задать термокомпенсацию(-)": 4,
+                          "задать термокомпенсацию(+)": 5}
+        self.stadiya_colibrovki = {0: "калибровка отключена", 1: "подайте 4мА (1 В)", 2: "подайте 20мА (5 В)",
+                                   3: "сохранить калибровку?", 4: "подайте 8мА (2 В)", 5: "подайте 12мА (3 В)",
+                                   6: "подайте 16мА (4 В)", 7: "ожидание стабилизации сигнала", 8: "калиброка"}
         self.refresh_ips()
         # кнопка подключения
         self.ui.pushButton.clicked.connect(self.connection)
@@ -40,37 +49,48 @@ class Modbus(QMainWindow):
         self.ui.pushButton_2.clicked.connect(self.ask)
         self.ui.pushButton_3.clicked.connect(self.nonconnection)
 
+
     # при отправке значения запускается поток
     def nonconnection(self):
-        self.stop_thread = True
-        self.ui.comboBox.clear()
         self.ui.pushButton.setEnabled(True)
+        self.ui.label.clear()
         self.client.close()
+        if self.thread:
+            self.monitoring_thread.join()
+
+
     def write_ip_to_file(self, ip):
         with open(self.FILE_NAME, "a") as file:
             file.write(f"{ip}\n")
         print(f"IP '{ip}' записан в файл.")
+
+
     def potok(self):
-        monitoring_thread = threading.Thread(target=self.surveillance)
-        monitoring_thread.daemon = True  # Закрыть поток при завершении программы
-        monitoring_thread.start()
+        self.monitoring_thread = threading.Thread(target=self.surveillance)
+        self.monitoring_thread.daemon = True  # Закрыть поток при завершении программы
+        self.monitoring_thread.start()
+
 
     def surveillance(self):
-        label = self.ui.label
-        while not self.stop_thread:
-            time.sleep(10)
-            result = self.client.read_holding_registers(10031, 1)
-            print(result)
-            if self.control_result != self.stadiya_colibrovki[result]:
-                self.control_result = self.stadiya_colibrovki[int(result)]
-                label.clear()  # Очищаем текст в QLabel
-                label.setText(self.control_result)
+        self.thread = True
+        while True:
+            result = self.client.read_holding_registers(10029, 10)
+
+            print(result.registers)
+            if self.control_result != self.stadiya_colibrovki[int(result.registers[0])]:
+                self.control_result = self.stadiya_colibrovki[int(result.registers[0])]
+                self.ui.label.clear()  # Очищаем текст в QLabel
+                self.ui.label.setText(self.control_result)
+                time.sleep(1)
+
 
     # Функция для чтения IP из файла в обратном порядке
     def read_ips_from_file(self):
         with open(self.FILE_NAME, "r") as file:
             lines = file.readlines()
         return [line.strip() for line in reversed(lines)]  # Удаляем лишние символы
+
+
     # функция для отправки значения в 10030 индекс
     def ask(self):
         vaalue = self.ui.comboBox_2.currentText()
@@ -80,36 +100,40 @@ class Modbus(QMainWindow):
         self.client.write_register(10030, self.main_dict[vaalue])
         self.potok()
 
+
     def refresh_ips(self):
         self.ui.comboBox.clear()
         ips = self.read_ips_from_file()
         self.ui.comboBox.addItems(ips)
         print("IP-адреса обновлены в comboBox.")
 
+
     # подключение к ModbusTcp
     def connection(self):
         text = self.ui.comboBox.currentText()
         self.client = ModbusTcpClient(text)
-        button = self.ui.pushButton
         # значение при подключении (True/False)
         a = self.client.connect()
         # есть подключение - кнопка зеленая, нет подключения - кнопка красная
         if a:
-            button.setEnabled(False)
-            button.setStyleSheet("""
-                QPushButton:disabled {
-                    background-color: rgba(0,255,0,30);
-                    width: 230px; 
-                    height: 50 px;
-                    color: white;
-                }
-            """)
+            print("все ок")
+            self.ui.pushButton.setEnabled(False)
+            self.ui.pushButton.setStyleSheet("""
+                    QPushButton:disabled {
+                        background-color: rgba(0,255,0,30);
+                        width: 230px; 
+                        height: 50 px;
+                        color: white;
+                    }
+                """)
+            self.ui.pushButton.setDisabled(True)
             self.ui.pushButton_2.setEnabled(True)
-            self.write_ip_to_file(text)
-            self.refresh_ips()
+            if text not in self.ips:
+                self.write_ip_to_file(text)
+                self.refresh_ips()
 
         else:
-            button.setStyleSheet(
+            self.ui.pushButton.setStyleSheet(
                 'QPushButton {background-color: rgba(255,0,0,30);width: 230px; height: 50 px; color: white;}')
             print("ошибка подключения")
 
@@ -119,3 +143,6 @@ if __name__ == "__main__":
     window = Modbus()
     window.show()
     sys.exit(app.exec())
+
+# отработать адгоритм перехода по точкам через slave
+# кнопка шаманит
