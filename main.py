@@ -1,16 +1,50 @@
-# This is a sample Python script.
+from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
+from pymodbus.server.sync import StartTcpServer
+from pymodbus.device import ModbusDeviceIdentification
+from pymodbus.datastore import ModbusSequentialDataBlock
+from threading import Thread
+import time
+import random
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Создаем функцию для изменения значения
+def update_values(context, interval=5):
+    """
+    Функция обновляет значение в ячейке 10030 каждые interval секунд.
+    """
+    address = 10030 - 1  # Преобразование в индекс массива (Modbus адреса начинаются с 1)
+    while True:
+        # Генерация значения от 1 до 5
+        value = random.randint(1, 5)
+        # Запись значения в контекст
+        context[0].setValues(3, address, [value])
+        print(f"Updated address 10030 with value: {value}")
+        time.sleep(interval)
 
+# Создаем Modbus Slave Context
+store = ModbusSlaveContext(
+    di=ModbusSequentialDataBlock(0, [0]*10000),  # Дискретные входы
+    co=ModbusSequentialDataBlock(0, [0]*10000),  # Коилы
+    hr=ModbusSequentialDataBlock(0, [0]*10000),  # Холдинговые регистры
+    ir=ModbusSequentialDataBlock(0, [0]*10000),  # Входные регистры
+)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Создаем серверный контекст
+context = ModbusServerContext(slaves=store, single=True)
 
+# Настраиваем идентификацию устройства
+identity = ModbusDeviceIdentification()
+identity.VendorName = 'TestServer'
+identity.ProductCode = 'TS'
+identity.VendorUrl = 'http://example.com'
+identity.ProductName = 'Modbus Test Server'
+identity.ModelName = 'Modbus Server'
+identity.MajorMinorRevision = '1.0'
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+# Запускаем поток для обновления значений
+thread = Thread(target=update_values, args=(store,))
+thread.daemon = True
+thread.start()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Запускаем сервер
+print("Starting Modbus TCP Server...")
+StartTcpServer(context, identity=identity, address=("0.0.0.0", 502))
