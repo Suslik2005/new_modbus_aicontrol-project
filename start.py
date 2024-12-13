@@ -6,12 +6,11 @@ import os
 import PySide6
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow
-from pymodbus.client import ModbusTcpClient
+from pymodbus.client.sync import ModbusTcpClient
 
 from main_window import Ui_MainWindow
-
+from main import ModbusServer
 DB_NAME = "ip.db"
-
 
 class Modbus(QMainWindow):
     def __init__(self):
@@ -118,14 +117,6 @@ class Modbus(QMainWindow):
         if a:
             print("все ок")
             self.ui.pushButton.setEnabled(False)
-            self.ui.pushButton.setStyleSheet("""
-                    QPushButton:disabled {
-                        background-color: rgba(0,255,0,30);
-                        width: 230px; 
-                        height: 50 px;
-                        color: white;
-                    }
-                """)
             self.ui.pushButton.setDisabled(True)
             self.ui.pushButton_2.setEnabled(True)
             if text not in self.ips:
@@ -134,7 +125,7 @@ class Modbus(QMainWindow):
 
         else:
             self.ui.pushButton.setStyleSheet(
-                'QPushButton {background-color: rgba(255,0,0,30);width: 230px; height: 50 px; color: white;}')
+                'QPushButton {background-color: rgba(255,0,0,30); color: white;}')
             print("ошибка подключения")
 
 
