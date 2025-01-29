@@ -23,7 +23,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(491, 227)
+        MainWindow.resize(655, 484)
         MainWindow.setStyleSheet(u"background-color:  rgba(160,160,160, 130);")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -33,6 +33,10 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.pushButton = QPushButton(self.centralwidget)
         self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setStyleSheet(u"QPushButton:disabled {\n"
+"                        background-color: rgba(0,255,0,30);\n"
+"                        color: white;\n"
+"                    }")
 
         self.verticalLayout.addWidget(self.pushButton)
 
@@ -40,6 +44,20 @@ class Ui_MainWindow(object):
         self.pushButton_3.setObjectName(u"pushButton_3")
 
         self.verticalLayout.addWidget(self.pushButton_3)
+
+        self.comboBox_3 = QComboBox(self.centralwidget)
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("")
+        self.comboBox_3.setObjectName(u"comboBox_3")
+
+        self.verticalLayout.addWidget(self.comboBox_3)
 
         self.comboBox = QComboBox(self.centralwidget)
         self.comboBox.setObjectName(u"comboBox")
@@ -88,6 +106,16 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"main_window", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u043f\u043e\u0434\u043a\u043b\u044e\u0447\u0438\u0442\u044c\u0441\u044f", None))
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"\u043e\u0442\u043a\u043b\u044e\u0447\u0438\u0442\u044c\u0441\u044f", None))
+        self.comboBox_3.setItemText(0, QCoreApplication.translate("MainWindow", u"1", None))
+        self.comboBox_3.setItemText(1, QCoreApplication.translate("MainWindow", u"2", None))
+        self.comboBox_3.setItemText(2, QCoreApplication.translate("MainWindow", u"3", None))
+        self.comboBox_3.setItemText(3, QCoreApplication.translate("MainWindow", u"4", None))
+        self.comboBox_3.setItemText(4, QCoreApplication.translate("MainWindow", u"5", None))
+        self.comboBox_3.setItemText(5, QCoreApplication.translate("MainWindow", u"6", None))
+        self.comboBox_3.setItemText(6, QCoreApplication.translate("MainWindow", u"7", None))
+        self.comboBox_3.setItemText(7, QCoreApplication.translate("MainWindow", u"8", None))
+        self.comboBox_3.setItemText(8, QCoreApplication.translate("MainWindow", u"\u0432\u0441\u0435 8", None))
+
         self.comboBox.setPlaceholderText("")
         self.comboBox_2.setItemText(0, QCoreApplication.translate("MainWindow", u"\u043a\u0430\u043b\u0438\u0431\u0440\u043e\u0432\u043a\u0430 \u043e\u0442\u043a\u043b\u044e\u0447\u0435\u043d\u0430", None))
         self.comboBox_2.setItemText(1, QCoreApplication.translate("MainWindow", u"\u043d\u0430\u0447\u0430\u0442\u044c \u043a\u0430\u043b\u0438\u0431\u0440\u043e\u0432\u043a\u0443", None))

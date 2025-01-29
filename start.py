@@ -6,10 +6,9 @@ import os
 import PySide6
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtWidgets import QApplication, QMainWindow
-from pymodbus.client.sync import ModbusTcpClient
+from pymodbus.client import ModbusTcpClient
 
 from main_window import Ui_MainWindow
-from main import ModbusServer
 DB_NAME = "ip.db"
 
 class Modbus(QMainWindow):
@@ -40,7 +39,7 @@ class Modbus(QMainWindow):
                           "задать термокомпенсацию(+)": 5}
         self.stadiya_colibrovki = {0: "калибровка отключена", 1: "подайте 4мА (1 В)", 2: "подайте 20мА (5 В)",
                                    3: "сохранить калибровку?", 4: "подайте 8мА (2 В)", 5: "подайте 12мА (3 В)",
-                                   6: "подайте 16мА (4 В)", 7: "ожидание стабилизации сигнала", 8: "калиброка"}
+                                   6: "подайте 16мА (4 В)", 7: "ожидание стабилизации сигнала", 8: "калибровка"}
         self.refresh_ips()
         # кнопка подключения
         self.ui.pushButton.clicked.connect(self.connection)
@@ -73,7 +72,7 @@ class Modbus(QMainWindow):
     def surveillance(self):
         self.thread = True
         while True:
-            result = self.client.read_holding_registers(10029, 10)
+            result = self.client.read_holding_registers(address = 10030,count=10)
 
             print(result.registers)
             if self.control_result != self.stadiya_colibrovki[int(result.registers[0])]:
@@ -93,10 +92,12 @@ class Modbus(QMainWindow):
     # функция для отправки значения в 10030 индекс
     def ask(self):
         vaalue = self.ui.comboBox_2.currentText()
+        kanal = self.ui.comboBox_3.currentText()
         print(vaalue)
         print(self.main_dict[vaalue])
         # отправка выбранной команды
-        self.client.write_register(10030, self.main_dict[vaalue])
+        self.client.write_register(10029, self.main_dict[vaalue])
+        self.client.write_register(10028,8 if len(kanal.split()) == 2 else int(kanal) - 1)
         self.potok()
 
 
@@ -122,6 +123,8 @@ class Modbus(QMainWindow):
             if text not in self.ips:
                 self.write_ip_to_file(text)
                 self.refresh_ips()
+            self.ui.pushButton.setStyleSheet(
+                'QPushButton {background-color: rgba(0,255,0,30); color: white;}')
 
         else:
             self.ui.pushButton.setStyleSheet(
@@ -136,4 +139,3 @@ if __name__ == "__main__":
     sys.exit(app.exec())
 
 # отработать адгоритм перехода по точкам через slave
-# кнопка шаманит
