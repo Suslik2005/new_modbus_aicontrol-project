@@ -40,6 +40,7 @@ class Modbus(QMainWindow):
         self.stadiya_colibrovki = {0: "калибровка отключена", 1: "подайте 4мА (1 В)", 2: "подайте 20мА (5 В)",
                                    3: "сохранить калибровку?", 4: "подайте 8мА (2 В)", 5: "подайте 12мА (3 В)",
                                    6: "подайте 16мА (4 В)", 7: "ожидание стабилизации сигнала", 8: "калибровка"}
+        self.bin = {8: 128, 7: 64, 6: 32,5: 16, 4: 8, 3: 4, 2: 2, 1: 1}
         self.refresh_ips()
         # кнопка подключения
         self.ui.pushButton.clicked.connect(self.connection)
@@ -55,6 +56,9 @@ class Modbus(QMainWindow):
         self.client.close()
         if self.thread:
             self.monitoring_thread.join()
+        self.ui.pushButton.setStyleSheet(
+             'QPushButton {background-color: rgba(255,0,0,30); color: white;}')
+
 
 
     def write_ip_to_file(self, ip):
@@ -75,11 +79,15 @@ class Modbus(QMainWindow):
             result = self.client.read_holding_registers(address = 10030,count=10)
 
             print(result.registers)
+            print(self.control_result)
             if self.control_result != self.stadiya_colibrovki[int(result.registers[0])]:
                 self.control_result = self.stadiya_colibrovki[int(result.registers[0])]
                 self.ui.label.clear()  # Очищаем текст в QLabel
                 self.ui.label.setText(self.control_result)
                 time.sleep(1)
+            if self.control_result == 'сохранить калибровку?':
+                self.client.write_register(10029, 2)
+
 
 
     # Функция для чтения IP из файла в обратном порядке
@@ -93,11 +101,14 @@ class Modbus(QMainWindow):
     def ask(self):
         vaalue = self.ui.comboBox_2.currentText()
         kanal = self.ui.comboBox_3.currentText()
+        tok = self.ui.comboBox_4.currentText()
         print(vaalue)
         print(self.main_dict[vaalue])
         # отправка выбранной команды
         self.client.write_register(10029, self.main_dict[vaalue])
         self.client.write_register(10028,8 if len(kanal.split()) == 2 else int(kanal) - 1)
+        self.client.write_register(10026, 0 if tok == 'Напряжение (В)' else 255)
+        self.client.write_register(10581, self.bin[int(kanal)])
         self.potok()
 
 
@@ -137,5 +148,3 @@ if __name__ == "__main__":
     window = Modbus()
     window.show()
     sys.exit(app.exec())
-
-# отработать адгоритм перехода по точкам через slave

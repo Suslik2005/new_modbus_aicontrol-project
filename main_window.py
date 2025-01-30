@@ -23,7 +23,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(655, 484)
+        MainWindow.resize(655, 399)
         MainWindow.setStyleSheet(u"background-color:  rgba(160,160,160, 130);")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -44,6 +44,13 @@ class Ui_MainWindow(object):
         self.pushButton_3.setObjectName(u"pushButton_3")
 
         self.verticalLayout.addWidget(self.pushButton_3)
+
+        self.comboBox_4 = QComboBox(self.centralwidget)
+        self.comboBox_4.addItem("")
+        self.comboBox_4.addItem("")
+        self.comboBox_4.setObjectName(u"comboBox_4")
+
+        self.verticalLayout.addWidget(self.comboBox_4)
 
         self.comboBox_3 = QComboBox(self.centralwidget)
         self.comboBox_3.addItem("")
@@ -106,6 +113,9 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"main_window", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u043f\u043e\u0434\u043a\u043b\u044e\u0447\u0438\u0442\u044c\u0441\u044f", None))
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"\u043e\u0442\u043a\u043b\u044e\u0447\u0438\u0442\u044c\u0441\u044f", None))
+        self.comboBox_4.setItemText(0, QCoreApplication.translate("MainWindow", u"\u041d\u0430\u043f\u0440\u044f\u0436\u0435\u043d\u0438\u0435 (\u0412)", None))
+        self.comboBox_4.setItemText(1, QCoreApplication.translate("MainWindow", u"\u0422\u043e\u043a (\u043c\u0410)", None))
+
         self.comboBox_3.setItemText(0, QCoreApplication.translate("MainWindow", u"1", None))
         self.comboBox_3.setItemText(1, QCoreApplication.translate("MainWindow", u"2", None))
         self.comboBox_3.setItemText(2, QCoreApplication.translate("MainWindow", u"3", None))
